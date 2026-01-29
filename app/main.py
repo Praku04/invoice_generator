@@ -146,6 +146,12 @@ async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "version": settings.app_version}
 
+# Simple test endpoint
+@app.get("/test")
+async def test_endpoint():
+    """Simple test endpoint."""
+    return {"message": "Backend is working!", "timestamp": "2026-01-29"}
+
 # Root redirect
 @app.get("/favicon.ico")
 async def favicon():

@@ -31,6 +31,8 @@ services:
       - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET}
     volumes:
       - ./uploads:/app/uploads
+    ports:
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -42,9 +44,12 @@ services:
     restart: unless-stopped
     command: >
       sh -c "
+        echo 'Starting application...' &&
         python wait-for-db.py &&
+        echo 'Database is ready, running migrations...' &&
         alembic upgrade head &&
-        gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120
+        echo 'Migrations complete, starting server...' &&
+        gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120 --log-level info
       "
 
   # Nginx Reverse Proxy
