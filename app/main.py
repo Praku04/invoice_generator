@@ -227,6 +227,46 @@ async def test_plans():
     except Exception as e:
         return {"status": "error", "message": f"Plans query failed: {str(e)}"}
 
+# Registration test endpoint
+@app.post("/test/register")
+async def test_register():
+    """Test registration process."""
+    try:
+        from app.database import SessionLocal
+        from app.services.user_service import UserService
+        from app.schemas.user import UserCreate
+        
+        db = SessionLocal()
+        try:
+            user_service = UserService(db)
+            test_user = UserCreate(
+                email="test@example.com",
+                full_name="Test User",
+                password="TestPass123"
+            )
+            
+            # Check if user already exists
+            existing = user_service.get_user_by_email(test_user.email)
+            if existing:
+                return {"status": "error", "message": "Test user already exists"}
+            
+            user = user_service.create_user(test_user)
+            return {
+                "status": "success", 
+                "message": "Test user created successfully",
+                "user_id": user.id,
+                "email": user.email
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        import traceback
+        return {
+            "status": "error", 
+            "message": f"Registration test failed: {str(e)}",
+            "traceback": traceback.format_exc()
+        }
+
 # Root redirect
 @app.get("/favicon.ico")
 async def favicon():
