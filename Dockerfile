@@ -22,9 +22,9 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libcairo2-dev \
     libpango1.0-dev \
-    libgdk-pixbuf2.0-dev \
+    libgdk-pixbuf-2.0-dev \
     libglib2.0-dev \
-    libgobject-introspection-1.0-dev \
+    libgirepository1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment
@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-2.0-0 \
     libffi8 \
     shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
