@@ -30,6 +30,22 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     
     try:
         user = user_service.create_user(user_data)
+        
+        # Send welcome and verification emails
+        from app.services.email_service import EmailService
+        email_service = EmailService(db)
+        
+        try:
+            # Send welcome email
+            email_service.send_welcome_email(user)
+            
+            # Send email verification
+            if user.verification_token:
+                email_service.send_email_verification(user, user.verification_token)
+        except Exception as e:
+            # Don't fail registration if email fails
+            print(f"Failed to send emails: {e}")
+        
         return user
     except ValueError as e:
         raise HTTPException(
@@ -88,18 +104,31 @@ def verify_email(verification_data: EmailVerification, db: Session = Depends(get
 def forgot_password(reset_data: PasswordReset, db: Session = Depends(get_db)):
     """Request password reset."""
     user_service = UserService(db)
-    reset_token = user_service.request_password_reset(reset_data.email)
+    user = user_service.get_user_by_email(reset_data.email)
     
-    if not reset_token:
+    if not user:
         # Don't reveal if email exists or not
         return {"message": "If the email exists, a reset link has been sent"}
     
-    # In production, send email with reset token
-    # For now, return the token (remove this in production)
-    return {
-        "message": "Password reset token generated",
-        "reset_token": reset_token  # Remove this in production
-    }
+    reset_token = user_service.request_password_reset(reset_data.email)
+    
+    if reset_token:
+        # Send password reset email
+        from app.services.email_service import EmailService
+        email_service = EmailService(db)
+        
+        try:
+            email_service.send_password_reset_email(user, reset_token)
+        except Exception as e:
+            print(f"Failed to send password reset email: {e}")
+            # For now, return the token in the response for testing
+            return {
+                "message": "Password reset requested",
+                "reset_token": reset_token,  # Remove this in production
+                "note": "Email not configured. Use this token for testing."
+            }
+    
+    return {"message": "If the email exists, a reset link has been sent"}
 
 
 @router.post("/reset-password")

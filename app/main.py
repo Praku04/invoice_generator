@@ -268,6 +268,48 @@ async def test_register():
             "traceback": traceback.format_exc()
         }
 
+# Email logs test endpoint
+@app.get("/test/emails")
+async def test_emails():
+    """Check email logs."""
+    try:
+        from app.database import SessionLocal
+        from app.models.email_log import EmailLog
+        
+        db = SessionLocal()
+        try:
+            emails = db.query(EmailLog).order_by(EmailLog.created_at.desc()).limit(10).all()
+            return {
+                "status": "success",
+                "count": len(emails),
+                "emails": [
+                    {
+                        "id": e.id,
+                        "to_email": e.to_email,
+                        "subject": e.subject,
+                        "status": e.status.value,
+                        "created_at": e.created_at.isoformat(),
+                        "error_message": e.error_message
+                    } for e in emails
+                ]
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        return {"status": "error", "message": f"Email logs failed: {str(e)}"}
+
+# Email configuration info
+@app.get("/test/email-config")
+async def test_email_config():
+    """Check email configuration."""
+    return {
+        "smtp_host": settings.smtp_host,
+        "smtp_port": settings.smtp_port,
+        "smtp_user": settings.smtp_user,
+        "from_email": settings.from_email,
+        "configured": bool(settings.smtp_host and settings.smtp_user and settings.smtp_password)
+    }
+
 # Root redirect
 @app.get("/favicon.ico")
 async def favicon():
