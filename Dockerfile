@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Install system dependencies
+# Install system dependencies including WeasyPrint build requirements
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -20,6 +20,11 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpng-dev \
     zlib1g-dev \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libgdk-pixbuf2.0-dev \
+    libglib2.0-dev \
+    libgobject-introspection-1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment
@@ -39,7 +44,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH"
 
-# Install runtime dependencies
+# Install runtime dependencies including WeasyPrint requirements
 RUN apt-get update && apt-get install -y \
     libpq5 \
     libxml2 \
@@ -47,6 +52,14 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo \
     libpng16-16 \
     zlib1g \
+    libglib2.0-0 \
+    libgobject-2.0-0 \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libffi8 \
+    shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy virtual environment from builder stage
