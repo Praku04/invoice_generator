@@ -42,15 +42,7 @@ services:
     restart: unless-stopped
     command: >
       sh -c "
-        echo 'Waiting for database...' &&
-        python -c 'import time; import psycopg2; 
-while True:
-  try: 
-    psycopg2.connect(\"postgresql://postgres:invoicedb123@db:5432/invoicedb\"); 
-    break
-  except: 
-    time.sleep(1)' &&
-        echo 'Database is ready!' &&
+        python wait-for-db.py &&
         alembic upgrade head &&
         gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120
       "
