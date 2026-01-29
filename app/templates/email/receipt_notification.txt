@@ -1,0 +1,39 @@
+{{ app_name }} - Payment Receipt
+
+Receipt Number: {{ receipt.formatted_receipt_number }}
+
+Dear {{ receipt.customer_name }},
+
+Thank you for your payment! We have successfully received your payment and generated a receipt for your records.
+
+Payment Details:
+- Receipt Number: {{ receipt.formatted_receipt_number }}
+- Payment Date: {{ receipt.payment_date.strftime('%B %d, %Y') if receipt.payment_date else 'N/A' }}
+- Payment Method: {{ receipt.payment_method or 'N/A' }}
+- Description: {{ receipt.title }}
+{% if receipt.transaction_id %}
+- Transaction ID: {{ receipt.transaction_id }}
+{% endif %}
+
+Amount Paid: {{ receipt.display_amount }}
+
+You can download your official receipt PDF using this link:
+{{ download_url }}
+
+This download link will expire in 24 hours and can be used up to 5 times.
+
+{% if receipt.receipt_type.value == 'subscription_payment' %}
+SUBSCRIPTION ACTIVE:
+Your subscription is now active and you have access to all premium features.
+{% endif %}
+
+{% if receipt.notes %}
+Additional Notes:
+{{ receipt.notes }}
+{% endif %}
+
+This is an automated email. Please do not reply to this message.
+If you have any questions, please contact our support team.
+
+---
+© {{ app_name }}. All rights reserved.

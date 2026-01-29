@@ -1,0 +1,22 @@
+@page { size: A4 landscape; margin: 1cm; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 12px; color: #333; position: relative; }
+.receipt-container { max-width: 100%; }
+.watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(76, 175, 80, 0.1); z-index: -1; font-weight: bold; }
+.header-section { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; }
+.receipt-info h1 { font-size: 28px; margin: 0 0 10px 0; }
+.receipt-number { font-size: 18px; font-weight: bold; }
+.receipt-date { font-size: 14px; opacity: 0.9; }
+.amount-display { text-align: right; }
+.amount-label { font-size: 14px; opacity: 0.9; }
+.amount-value { font-size: 32px; font-weight: bold; margin-top: 5px; }
+.details-section { display: flex; justify-content: space-between; margin-bottom: 30px; gap: 30px; }
+.company-details, .customer-details, .payment-details { flex: 1; background: #f8f9fa; padding: 20px; border-radius: 8px; }
+.details-section h3 { color: #4CAF50; margin: 0 0 15px 0; font-size: 16px; border-bottom: 2px solid #4CAF50; padding-bottom: 5px; }
+.company-name, .customer-name { font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+.description-section { background: #fff; border: 2px solid #4CAF50; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+.description-section h3 { color: #4CAF50; margin: 0 0 15px 0; }
+.description-text { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+.description-details { color: #666; }
+.footer-section { text-align: center; padding: 20px; border-top: 1px solid #eee; }
+.thank-you { font-size: 18px; font-weight: bold; color: #4CAF50; margin-bottom: 10px; }
+.generated-info { font-size: 11px; color: #999; }

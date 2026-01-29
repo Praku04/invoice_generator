@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice {{ notification_type }} - {{ app_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #007bff; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f8f9fa; }
+        .button { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ app_name }}</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Invoice {{ notification_type }}</h2>
+            
+            <p>Hello {{ user.full_name }},</p>
+            
+            <p>Your invoice <strong>{{ invoice.invoice_number }}</strong> has been {{ notification_type.lower() }}.</p>
+            
+            <div style="background: white; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <h3>Invoice Details:</h3>
+                <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+                <p><strong>Client:</strong> {{ invoice.client_name }}</p>
+                <p><strong>Amount:</strong> {{ invoice.currency }} {{ invoice.grand_total }}</p>
+                <p><strong>Date:</strong> {{ invoice.invoice_date.strftime('%B %d, %Y') }}</p>
+            </div>
+            
+            <p>You can download the invoice PDF using the link below:</p>
+            <a href="{{ download_url }}" class="button">Download Invoice PDF</a>
+            
+            <p><small>This download link will expire in 24 hours and can be used up to 5 times.</small></p>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ app_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

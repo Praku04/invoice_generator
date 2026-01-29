@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: invoicedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: invoicedb123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # FastAPI Application
+  app:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://postgres:invoicedb123@db:5432/invoicedb
+      - SECRET_KEY=your-super-secret-key-change-this-in-production
+      - JWT_SECRET_KEY=your-jwt-secret-key-change-this-in-production
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET}
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        python -c 'import time; import psycopg2; 
+        while True:
+          try: 
+            psycopg2.connect(\"postgresql://postgres:invoicedb123@db:5432/invoicedb\"); 
+            break
+          except: 
+            time.sleep(1)' &&
+        echo 'Database is ready!' &&
+        alembic upgrade head &&
+        gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120
+      "
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./uploads:/var/www/uploads:ro
+      - ./static:/var/www/static:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

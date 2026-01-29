@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - {{ app_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #28a745; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f8f9fa; }
+        .button { display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .receipt-details { background: white; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #28a745; }
+        .amount-highlight { font-size: 24px; font-weight: bold; color: #28a745; text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Receipt</h1>
+            <h2>{{ receipt.formatted_receipt_number }}</h2>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ receipt.customer_name }},</p>
+            
+            <p>Thank you for your payment! We have successfully received your payment and generated a receipt for your records.</p>
+            
+            <div class="receipt-details">
+                <h3>Payment Details:</h3>
+                <p><strong>Receipt Number:</strong> {{ receipt.formatted_receipt_number }}</p>
+                <p><strong>Payment Date:</strong> {{ receipt.payment_date.strftime('%B %d, %Y') if receipt.payment_date else 'N/A' }}</p>
+                <p><strong>Payment Method:</strong> {{ receipt.payment_method or 'N/A' }}</p>
+                <p><strong>Description:</strong> {{ receipt.title }}</p>
+                {% if receipt.transaction_id %}
+                <p><strong>Transaction ID:</strong> {{ receipt.transaction_id }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="amount-highlight">
+                Amount Paid: {{ receipt.display_amount }}
+            </div>
+            
+            <p>You can download your official receipt PDF using the link below:</p>
+            <div style="text-align: center;">
+                <a href="{{ download_url }}" class="button">Download Receipt PDF</a>
+            </div>
+            
+            <p><small>This download link will expire in 24 hours and can be used up to 5 times.</small></p>
+            
+            {% if receipt.receipt_type.value == 'subscription_payment' %}
+            <div style="background: #d4edda; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <h4 style="color: #155724; margin-top: 0;">Subscription Active</h4>
+                <p style="color: #155724; margin-bottom: 0;">Your subscription is now active and you have access to all premium features.</p>
+            </div>
+            {% endif %}
+            
+            {% if receipt.notes %}
+            <div style="background: white; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <h4>Additional Notes:</h4>
+                <p>{{ receipt.notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated email. Please do not reply to this message.</p>
+            <p>If you have any questions, please contact our support team.</p>
+            <p>© {{ app_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,410 @@
+@page {
+    size: A4;
+    margin: 1cm;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
+    position: relative;
+}
+
+.receipt-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Watermark */
+.watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 72px;
+    color: rgba(40, 167, 69, 0.1);
+    z-index: -1;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Header Section */
+.receipt-header {
+    text-align: center;
+    border-bottom: 3px solid #28a745;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.receipt-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.receipt-number {
+    font-size: 20px;
+    font-weight: bold;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.receipt-date {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* Section Styling */
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #28a745;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Company Section */
+.company-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border-left: 5px solid #28a745;
+}
+
+.company-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 8px;
+}
+
+.company-address {
+    font-size: 13px;
+    color: #495057;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.company-tax-info {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.company-tax-info span {
+    margin-right: 20px;
+}
+
+/* Customer Section */
+.customer-section {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border-left: 5px solid #6c757d;
+}
+
+.customer-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.customer-email,
+.customer-phone,
+.customer-address,
+.customer-tax {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+/* Payment Section */
+.payment-section {
+    background-color: #fff;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.payment-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.payment-table tr:last-child td {
+    border-bottom: none;
+}
+
+.payment-table .label {
+    font-weight: bold;
+    color: #495057;
+    width: 35%;
+}
+
+.payment-table .value {
+    color: #212529;
+    width: 65%;
+}
+
+/* Amount Section */
+.amount-section {
+    background-color: #d4edda;
+    border: 3px solid #28a745;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.amount-breakdown {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #c3e6cb;
+}
+
+.amount-row:last-child {
+    border-bottom: none;
+}
+
+.total-row {
+    font-size: 18px;
+    font-weight: bold;
+    color: #155724;
+    border-top: 2px solid #28a745;
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+.amount-label {
+    font-weight: 600;
+    color: #155724;
+}
+
+.amount-value {
+    font-weight: bold;
+    color: #155724;
+}
+
+/* Amount in Words */
+.amount-words {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border-left: 5px solid #28a745;
+}
+
+.words-label {
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.words-text {
+    font-size: 14px;
+    font-style: italic;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* Tax Section */
+.tax-section {
+    margin-bottom: 25px;
+}
+
+.tax-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tax-table th {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.tax-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 11px;
+}
+
+.tax-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.tax-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Notes Section */
+.notes-section {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-left: 5px solid #ffc107;
+}
+
+.notes-content {
+    font-size: 13px;
+    color: #856404;
+    line-height: 1.5;
+}
+
+/* Footer */
+.receipt-footer {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 2px solid #dee2e6;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.signature-section {
+    text-align: center;
+}
+
+.signature-line {
+    width: 150px;
+    height: 1px;
+    background-color: #333;
+    margin: 40px auto 8px;
+}
+
+.signature-text {
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.footer-info {
+    text-align: right;
+    max-width: 300px;
+}
+
+.thank-you {
+    font-size: 16px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 8px;
+}
+
+.generated-info {
+    font-size: 10px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.validity-info {
+    font-size: 11px;
+    color: #495057;
+    font-style: italic;
+}
+
+/* Print Optimizations */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .receipt-container {
+        max-width: none;
+    }
+    
+    .receipt-header {
+        page-break-inside: avoid;
+    }
+    
+    .payment-section {
+        page-break-inside: avoid;
+    }
+    
+    .amount-section {
+        page-break-inside: avoid;
+    }
+    
+    .receipt-footer {
+        page-break-inside: avoid;
+    }
+    
+    .watermark {
+        position: fixed;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .receipt-title {
+        font-size: 24px;
+    }
+    
+    .receipt-number {
+        font-size: 16px;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-info {
+        text-align: center;
+        max-width: none;
+    }
+    
+    .payment-table .label,
+    .payment-table .value {
+        width: auto;
+    }
+    
+    .amount-breakdown {
+        max-width: none;
+    }
+}

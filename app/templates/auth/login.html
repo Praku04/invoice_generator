@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Welcome Back</h2>
+                        <p class="text-muted">Sign in to your account</p>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="loginSpinner"></span>
+                            Sign In
+                        </button>
+                    </form>
+                    
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none" onclick="forgotPassword()">Forgot your password?</a>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account? <a href="/register" class="text-decoration-none">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reset Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <label for="resetEmail" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="resetEmail" name="email" required>
+                        <div class="form-text">We'll send you a link to reset your password.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const spinner = document.getElementById('loginSpinner');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    spinner.classList.remove('d-none');
+    submitBtn.disabled = true;
+    
+    const formData = new FormData(e.target);
+    const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Store token
+            setToken(result.access_token);
+            
+            // Redirect to dashboard
+            window.location.href = '/dashboard';
+        } else {
+            showAlert(result.detail || 'Login failed', 'danger');
+        }
+    } catch (error) {
+        showAlert('Network error. Please try again.', 'danger');
+    } finally {
+        // Hide loading state
+        spinner.classList.add('d-none');
+        submitBtn.disabled = false;
+    }
+});
+
+function forgotPassword() {
+    const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+    modal.show();
+}
+
+document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const data = {
+        email: formData.get('email')
+    };
+    
+    try {
+        const response = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showAlert('Password reset link sent to your email', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
+        } else {
+            showAlert(result.detail || 'Failed to send reset link', 'danger');
+        }
+    } catch (error) {
+        showAlert('Network error. Please try again.', 'danger');
+    }
+});
+
+// Check if user is already logged in
+if (getToken()) {
+    window.location.href = '/dashboard';
+}
+</script>
+{% endblock %}

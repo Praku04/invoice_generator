@@ -1,0 +1,40 @@
+{{ app_name }} - Subscription {{ subscription_type|title }}
+
+Hello {{ user.full_name }},
+
+{% if subscription_type == 'activated' %}
+Great news! Your subscription has been successfully activated.
+{% elif subscription_type == 'cancelled' %}
+Your subscription has been cancelled as requested.
+{% elif subscription_type == 'renewed' %}
+Your subscription has been automatically renewed.
+{% endif %}
+
+{% if subscription_data %}
+Subscription Details:
+{% if subscription_data.plan_name %}
+- Plan: {{ subscription_data.plan_name }}
+{% endif %}
+{% if subscription_data.plan_price %}
+- Price: ₹{{ (subscription_data.plan_price / 100)|round(2) }}
+{% endif %}
+{% if subscription_data.current_period_start %}
+- Period Start: {{ subscription_data.current_period_start[:10] }}
+{% endif %}
+{% if subscription_data.current_period_end %}
+- Period End: {{ subscription_data.current_period_end[:10] }}
+{% endif %}
+{% endif %}
+
+{% if subscription_type == 'activated' %}
+You now have access to all premium features including unlimited invoices!
+{% elif subscription_type == 'cancelled' %}
+You'll continue to have access to premium features until the end of your current billing period.
+{% elif subscription_type == 'renewed' %}
+Your premium access continues for another billing period.
+{% endif %}
+
+Visit your dashboard: {{ dashboard_url }}
+
+---
+© {{ app_name }}. All rights reserved.

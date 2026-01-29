@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Dashboard</h1>
+    <a href="/invoices/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Create Invoice
+    </a>
+</div>
+
+<!-- Subscription Status Alert -->
+{% if subscription and subscription.plan.price == 0 %}
+<div class="alert alert-info d-flex align-items-center mb-4">
+    <i class="bi bi-info-circle me-3"></i>
+    <div class="flex-grow-1">
+        <strong>Free Plan Active</strong> - You have {{ invoice_limit - current_invoice_count }} invoices remaining this month.
+        <a href="/subscription" class="alert-link ms-2">Upgrade to Pro</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title text-muted mb-1">Total Invoices</h6>
+                        <h3 class="mb-0">{{ total_invoices }}</h3>
+                    </div>
+                    <div class="text-primary">
+                        <i class="bi bi-receipt fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title text-muted mb-1">Total Revenue</h6>
+                        <h3 class="mb-0">{{ "₹{:,.2f}".format(total_revenue) }}</h3>
+                    </div>
+                    <div class="text-success">
+                        <i class="bi bi-currency-rupee fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title text-muted mb-1">This Month</h6>
+                        <h3 class="mb-0">{{ current_invoice_count }}</h3>
+                        {% if invoice_limit > 0 %}
+                        <small class="text-muted">of {{ invoice_limit }} invoices</small>
+                        {% endif %}
+                    </div>
+                    <div class="text-info">
+                        <i class="bi bi-calendar-month fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title text-muted mb-1">Plan</h6>
+                        <h3 class="mb-0">{{ subscription.plan.name if subscription else 'None' }}</h3>
+                        {% if subscription and subscription.plan.price > 0 %}
+                        <small class="text-muted">₹{{ subscription.plan.price // 100 }}/month</small>
+                        {% endif %}
+                    </div>
+                    <div class="text-warning">
+                        <i class="bi bi-star fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Invoices -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Recent Invoices</h5>
+        <a href="/invoices" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body">
+        {% if recent_invoices %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in recent_invoices %}
+                    <tr>
+                        <td>
+                            <a href="/invoices/{{ invoice.id }}" class="text-decoration-none">
+                                {{ invoice.invoice_number }}
+                            </a>
+                        </td>
+                        <td>{{ invoice.client_name }}</td>
+                        <td>{{ invoice.invoice_date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ "₹{:,.2f}".format(invoice.grand_total) }}</td>
+                        <td>
+                            {% if invoice.status == 'draft' %}
+                            <span class="badge bg-secondary">Draft</span>
+                            {% elif invoice.status == 'finalized' %}
+                            <span class="badge bg-primary">Finalized</span>
+                            {% elif invoice.status == 'sent' %}
+                            <span class="badge bg-info">Sent</span>
+                            {% elif invoice.status == 'paid' %}
+                            <span class="badge bg-success">Paid</span>
+                            {% elif invoice.status == 'cancelled' %}
+                            <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/invoices/{{ invoice.id }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% if invoice.status == 'draft' %}
+                                <a href="/invoices/{{ invoice.id }}/edit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% endif %}
+                                {% if subscription and subscription.plan.price > 0 and invoice.status != 'draft' %}
+                                <a href="/api/invoices/{{ invoice.id }}/pdf" class="btn btn-outline-success" target="_blank">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
+            <h5 class="mt-3 text-muted">No invoices yet</h5>
+            <p class="text-muted">Create your first invoice to get started.</p>
+            <a href="/invoices/create" class="btn btn-primary">Create Invoice</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-gear text-primary" style="font-size: 2rem;"></i>
+                <h5 class="mt-3">Customize Settings</h5>
+                <p class="text-muted">Set up your company profile, invoice templates, and preferences.</p>
+                <a href="/settings" class="btn btn-outline-primary">Go to Settings</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-credit-card text-success" style="font-size: 2rem;"></i>
+                <h5 class="mt-3">Manage Subscription</h5>
+                <p class="text-muted">View your current plan, usage, and billing information.</p>
+                <a href="/subscription" class="btn btn-outline-success">View Subscription</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh dashboard data every 30 seconds
+setInterval(function() {
+    // You can add AJAX calls here to refresh stats without page reload
+}, 30000);
+
+// Check if user needs to complete profile setup
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if company profile is set up
+    apiRequest('/settings/company')
+        .then(response => {
+            if (!response.ok && response.status === 404) {
+                // Show setup reminder
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-warning alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>Complete your setup:</strong> Add your company information to create professional invoices.
+                    <a href="/settings" class="alert-link ms-2">Complete Setup</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const container = document.querySelector('.main-content');
+                container.insertBefore(alertDiv, container.firstChild);
+            }
+        })
+        .catch(error => {
+            console.log('Could not check company profile status');
+        });
+});
+</script>
+{% endblock %}

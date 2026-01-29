@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ invoice.invoice_title }} - {{ invoice.invoice_number }}</title>
+</head>
+<body>
+    <!-- Invoice Header -->
+    <div class="invoice-header clearfix">
+        <div class="company-info">
+            {% if logo_url and company %}
+            <img src="{{ logo_url }}" alt="Company Logo" class="logo">
+            {% endif %}
+            
+            {% if company %}
+            <h2>{{ company.company_name }}</h2>
+            <div class="company-details">
+                {% if company.address_line1 %}
+                <p>{{ company.address_line1 }}</p>
+                {% endif %}
+                {% if company.address_line2 %}
+                <p>{{ company.address_line2 }}</p>
+                {% endif %}
+                {% if company.city or company.state or company.postal_code %}
+                <p>
+                    {% if company.city %}{{ company.city }}{% endif %}
+                    {% if company.state %}, {{ company.state }}{% endif %}
+                    {% if company.postal_code %} - {{ company.postal_code }}{% endif %}
+                </p>
+                {% endif %}
+                {% if company.country %}
+                <p>{{ company.country }}</p>
+                {% endif %}
+                
+                {% if company.gstin %}
+                <p><strong>GSTIN:</strong> {{ company.gstin }}</p>
+                {% endif %}
+                {% if company.pan %}
+                <p><strong>PAN:</strong> {{ company.pan }}</p>
+                {% endif %}
+                {% if company.phone %}
+                <p><strong>Phone:</strong> {{ company.phone }}</p>
+                {% endif %}
+                {% if company.email %}
+                <p><strong>Email:</strong> {{ company.email }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="invoice-info">
+            <h1 class="invoice-title">{{ invoice.invoice_title }}</h1>
+            <table>
+                <tr>
+                    <td><strong>Invoice #:</strong></td>
+                    <td>{{ invoice.invoice_number }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td>{{ format_date(invoice.invoice_date) }}</td>
+                </tr>
+                {% if invoice.due_date %}
+                <tr>
+                    <td><strong>Due Date:</strong></td>
+                    <td>{{ format_date(invoice.due_date) }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Client Information -->
+    <div class="client-info">
+        <h3>Bill To:</h3>
+        <div class="client-details">
+            <p><strong>{{ invoice.client_name }}</strong></p>
+            {% if invoice.client_address_line1 %}
+            <p>{{ invoice.client_address_line1 }}</p>
+            {% endif %}
+            {% if invoice.client_address_line2 %}
+            <p>{{ invoice.client_address_line2 }}</p>
+            {% endif %}
+            {% if invoice.client_city or invoice.client_state or invoice.client_postal_code %}
+            <p>
+                {% if invoice.client_city %}{{ invoice.client_city }}{% endif %}
+                {% if invoice.client_state %}, {{ invoice.client_state }}{% endif %}
+                {% if invoice.client_postal_code %} - {{ invoice.client_postal_code }}{% endif %}
+            </p>
+            {% endif %}
+            {% if invoice.client_country %}
+            <p>{{ invoice.client_country }}</p>
+            {% endif %}
+            {% if invoice.client_gstin %}
+            <p><strong>GSTIN:</strong> {{ invoice.client_gstin }}</p>
+            {% endif %}
+            {% if invoice.client_email %}
+            <p><strong>Email:</strong> {{ invoice.client_email }}</p>
+            {% endif %}
+            {% if invoice.client_phone %}
+            <p><strong>Phone:</strong> {{ invoice.client_phone }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Invoice Items -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Description</th>
+                <th>HSN/SAC</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Discount</th>
+                <th>Taxable</th>
+                <th>GST %</th>
+                <th>GST Amount</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                    <strong>{{ item.item_name }}</strong>
+                    {% if item.description %}
+                    <br><small>{{ item.description }}</small>
+                    {% endif %}
+                </td>
+                <td>{{ item.hsn_code or '-' }}</td>
+                <td class="text-right">{{ item.quantity }}</td>
+                <td>{{ item.unit }}</td>
+                <td class="text-right">{{ format_currency(item.rate) }}</td>
+                <td class="text-right">{{ format_currency(item.line_total) }}</td>
+                <td class="text-right">{{ format_currency(item.discount_amount) }}</td>
+                <td class="text-right">{{ format_currency(item.taxable_amount) }}</td>
+                <td class="text-right">{{ item.gst_rate }}%</td>
+                <td class="text-right">{{ format_currency(item.cgst_amount + item.sgst_amount + item.igst_amount) }}</td>
+                <td class="text-right">{{ format_currency(item.total_amount) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Totals Section -->
+    <div class="totals-section">
+        <table class="totals-table">
+            <tr>
+                <td>Subtotal:</td>
+                <td class="text-right">{{ format_currency(invoice.subtotal) }}</td>
+            </tr>
+            {% if invoice.discount_amount > 0 %}
+            <tr>
+                <td>Discount:</td>
+                <td class="text-right">- {{ format_currency(invoice.discount_amount) }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Taxable Amount:</td>
+                <td class="text-right">{{ format_currency(invoice.taxable_amount) }}</td>
+            </tr>
+            {% if invoice.cgst_amount > 0 %}
+            <tr>
+                <td>CGST:</td>
+                <td class="text-right">{{ format_currency(invoice.cgst_amount) }}</td>
+            </tr>
+            {% endif %}
+            {% if invoice.sgst_amount > 0 %}
+            <tr>
+                <td>SGST:</td>
+                <td class="text-right">{{ format_currency(invoice.sgst_amount) }}</td>
+            </tr>
+            {% endif %}
+            {% if invoice.igst_amount > 0 %}
+            <tr>
+                <td>IGST:</td>
+                <td class="text-right">{{ format_currency(invoice.igst_amount) }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>Total Tax:</td>
+                <td class="text-right">{{ format_currency(invoice.total_tax) }}</td>
+            </tr>
+            {% if invoice.round_off != 0 %}
+            <tr>
+                <td>Round Off:</td>
+                <td class="text-right">{{ format_currency(invoice.round_off) }}</td>
+            </tr>
+            {% endif %}
+            <tr class="total-row">
+                <td><strong>Grand Total:</strong></td>
+                <td class="text-right"><strong>{{ format_currency(invoice.grand_total) }}</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Tax Breakdown -->
+    {% if invoice.cgst_amount > 0 or invoice.sgst_amount > 0 or invoice.igst_amount > 0 %}
+    <div class="tax-breakdown">
+        <h4>Tax Breakdown</h4>
+        <table class="tax-table">
+            <thead>
+                <tr>
+                    <th>HSN/SAC</th>
+                    <th>Taxable Amount</th>
+                    {% if invoice.cgst_amount > 0 %}
+                    <th>CGST Rate</th>
+                    <th>CGST Amount</th>
+                    {% endif %}
+                    {% if invoice.sgst_amount > 0 %}
+                    <th>SGST Rate</th>
+                    <th>SGST Amount</th>
+                    {% endif %}
+                    {% if invoice.igst_amount > 0 %}
+                    <th>IGST Rate</th>
+                    <th>IGST Amount</th>
+                    {% endif %}
+                    <th>Total Tax</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.hsn_code or '-' }}</td>
+                    <td>{{ format_currency(item.taxable_amount) }}</td>
+                    {% if invoice.cgst_amount > 0 %}
+                    <td>{{ item.cgst_rate }}%</td>
+                    <td>{{ format_currency(item.cgst_amount) }}</td>
+                    {% endif %}
+                    {% if invoice.sgst_amount > 0 %}
+                    <td>{{ item.sgst_rate }}%</td>
+                    <td>{{ format_currency(item.sgst_amount) }}</td>
+                    {% endif %}
+                    {% if invoice.igst_amount > 0 %}
+                    <td>{{ item.igst_rate }}%</td>
+                    <td>{{ format_currency(item.igst_amount) }}</td>
+                    {% endif %}
+                    <td>{{ format_currency(item.cgst_amount + item.sgst_amount + item.igst_amount) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Amount in Words -->
+    <div class="amount-words">
+        <strong>Amount in Words:</strong> {{ number_to_words(invoice.grand_total) }}
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer-section clearfix">
+        {% if invoice.notes %}
+        <div class="notes">
+            <h4>Notes:</h4>
+            <p>{{ invoice.notes }}</p>
+        </div>
+        {% endif %}
+
+        {% if invoice.terms %}
+        <div class="terms">
+            <h4>Terms & Conditions:</h4>
+            <p>{{ invoice.terms }}</p>
+        </div>
+        {% endif %}
+
+        {% if invoice.footer_message %}
+        <div class="footer-message">
+            <p>{{ invoice.footer_message }}</p>
+        </div>
+        {% endif %}
+
+        {% if stamp_url %}
+        <div class="signature">
+            <p>Authorized Signatory</p>
+            <img src="{{ stamp_url }}" alt="Signature/Stamp" class="stamp">
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Generated timestamp -->
+    <div class="generated-info">
+        <small>Generated on {{ generated_at.strftime('%d/%m/%Y at %I:%M %p') }}</small>
+    </div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Create Account</h2>
+                        <p class="text-muted">Start your free trial today</p>
+                    </div>
+                    
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" name="full_name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">
+                                Password must be at least 8 characters with uppercase, lowercase, and number.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="/terms" target="_blank">Terms of Service</a> and 
+                                <a href="/privacy" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="registerSpinner"></span>
+                            Create Account
+                        </button>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account? <a href="/login" class="text-decoration-none">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const spinner = document.getElementById('registerSpinner');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    
+    // Validate passwords match
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (password !== confirmPassword) {
+        showAlert('Passwords do not match', 'danger');
+        return;
+    }
+    
+    // Show loading state
+    spinner.classList.remove('d-none');
+    submitBtn.disabled = true;
+    
+    const formData = new FormData(e.target);
+    const data = {
+        full_name: formData.get('full_name'),
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    try {
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showAlert('Account created successfully! Please check your email for verification.', 'success');
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        } else {
+            showAlert(result.detail || 'Registration failed', 'danger');
+        }
+    } catch (error) {
+        showAlert('Network error. Please try again.', 'danger');
+    } finally {
+        // Hide loading state
+        spinner.classList.add('d-none');
+        submitBtn.disabled = false;
+    }
+});
+
+// Password strength indicator
+document.getElementById('password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const feedback = e.target.nextElementSibling;
+    
+    let strength = 0;
+    let messages = [];
+    
+    if (password.length >= 8) strength++;
+    else messages.push('at least 8 characters');
+    
+    if (/[A-Z]/.test(password)) strength++;
+    else messages.push('uppercase letter');
+    
+    if (/[a-z]/.test(password)) strength++;
+    else messages.push('lowercase letter');
+    
+    if (/\d/.test(password)) strength++;
+    else messages.push('number');
+    
+    if (strength === 4) {
+        feedback.className = 'form-text text-success';
+        feedback.textContent = 'Strong password';
+    } else {
+        feedback.className = 'form-text text-warning';
+        feedback.textContent = 'Password needs: ' + messages.join(', ');
+    }
+});
+
+// Check if user is already logged in
+if (getToken()) {
+    window.location.href = '/dashboard';
+}
+</script>
+{% endblock %}

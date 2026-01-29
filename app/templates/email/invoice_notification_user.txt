@@ -1,0 +1,21 @@
+{{ app_name }}
+
+Invoice {{ notification_type }}
+
+Hello {{ user.full_name }},
+
+Your invoice {{ invoice.invoice_number }} has been {{ notification_type.lower() }}.
+
+Invoice Details:
+- Invoice Number: {{ invoice.invoice_number }}
+- Client: {{ invoice.client_name }}
+- Amount: {{ invoice.currency }} {{ invoice.grand_total }}
+- Date: {{ invoice.invoice_date.strftime('%B %d, %Y') }}
+
+You can download the invoice PDF using this link:
+{{ download_url }}
+
+This download link will expire in 24 hours and can be used up to 5 times.
+
+---
+© {{ app_name }}. All rights reserved.

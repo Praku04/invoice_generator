@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Professional Invoice Generator for Your Business</h1>
+                <p class="lead mb-4">Create, customize, and send professional invoices in minutes. GST compliant, PDF generation, and subscription management - everything you need to manage your billing.</p>
+                <div class="d-flex gap-3">
+                    <a href="/register" class="btn btn-light btn-lg">Start Free Trial</a>
+                    <a href="/pricing" class="btn btn-outline-light btn-lg">View Pricing</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                     alt="Invoice Management" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Everything You Need for Professional Invoicing</h2>
+                <p class="lead text-muted">Streamline your billing process with our comprehensive invoice management solution.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-receipt fs-4"></i>
+                    </div>
+                    <h4>Professional Invoices</h4>
+                    <p class="text-muted">Create beautiful, professional invoices with your company branding, logo, and custom templates.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-calculator fs-4"></i>
+                    </div>
+                    <h4>GST Compliance</h4>
+                    <p class="text-muted">Automatic GST calculations with CGST, SGST, and IGST support. Fully compliant with Indian tax regulations.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-file-earmark-pdf fs-4"></i>
+                    </div>
+                    <h4>PDF Generation</h4>
+                    <p class="text-muted">Generate high-quality PDF invoices ready for printing or email. Professional layouts with your branding.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-palette fs-4"></i>
+                    </div>
+                    <h4>Full Customization</h4>
+                    <p class="text-muted">Customize invoice templates, add your logo, stamps, and personalize every aspect of your invoices.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h4>Secure & Reliable</h4>
+                    <p class="text-muted">Bank-grade security with encrypted data storage. Your business information is always protected.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-graph-up fs-4"></i>
+                    </div>
+                    <h4>Business Analytics</h4>
+                    <p class="text-muted">Track your revenue, monitor invoice status, and get insights into your business performance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Preview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Simple, Transparent Pricing</h2>
+                <p class="lead text-muted">Start free, upgrade when you need more features.</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card pricing-card h-100">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title">Free</h4>
+                        <div class="display-6 fw-bold text-primary mb-3">₹0<small class="fs-6 text-muted">/month</small></div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>3 invoices per month</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Basic templates</li>
+                            <li class="mb-2"><i class="bi bi-x text-danger me-2"></i>No PDF download</li>
+                            <li class="mb-2"><i class="bi bi-x text-danger me-2"></i>No logo/stamp</li>
+                        </ul>
+                        <a href="/register" class="btn btn-outline-primary">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card pricing-card featured h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="badge bg-primary mb-2">Most Popular</div>
+                        <h4 class="card-title">Pro</h4>
+                        <div class="display-6 fw-bold text-primary mb-3">₹99<small class="fs-6 text-muted">/month</small></div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Unlimited invoices</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>PDF download</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Custom logo & stamp</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>GST calculations</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Priority support</li>
+                        </ul>
+                        <a href="/register" class="btn btn-primary">Start Free Trial</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Ready to Streamline Your Invoicing?</h2>
+                <p class="lead text-muted mb-4">Join thousands of businesses already using our platform to manage their invoices efficiently.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/register" class="btn btn-primary btn-lg">Start Free Trial</a>
+                    <a href="/contact" class="btn btn-outline-primary btn-lg">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+Invoice from {{ invoice.user.full_name }}
+
+Hello {{ invoice.client_name }},
+
+You have received an invoice from {{ invoice.user.full_name }}.
+
+Invoice Details:
+- Invoice Number: {{ invoice.invoice_number }}
+- Amount: {{ invoice.currency }} {{ invoice.grand_total }}
+- Due Date: {{ invoice.due_date.strftime('%B %d, %Y') if invoice.due_date else 'Not specified' }}
+{% if invoice.notes %}
+- Notes: {{ invoice.notes }}
+{% endif %}
+
+You can view and download the invoice PDF using this link:
+{{ download_url }}
+
+This link will expire in 24 hours.
+
+{% if invoice.user.company_profile %}
+From:
+{{ invoice.user.company_profile.company_name }}
+{% if invoice.user.company_profile.address %}
+{{ invoice.user.company_profile.address }}
+{% endif %}
+{% if invoice.user.company_profile.phone %}
+Phone: {{ invoice.user.company_profile.phone }}
+{% endif %}
+Email: {{ invoice.user.email }}
+{% endif %}
+
+---
+This invoice was generated using {{ app_name }}

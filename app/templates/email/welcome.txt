@@ -1,0 +1,25 @@
+Welcome to {{ app_name }}!
+
+Hello {{ user.full_name }},
+
+Welcome to {{ app_name }}! Your account has been successfully created and verified.
+
+What you can do now:
+
+📄 Create Professional Invoices
+Design and customize invoices with your company branding
+
+📧 Send Invoices Directly  
+Email invoices to clients with secure download links
+
+💰 Track Payments
+Monitor payment status and manage your cash flow
+
+🚀 Upgrade for More
+Get unlimited invoices and premium features with our paid plan
+
+Ready to get started? Visit your dashboard:
+{{ dashboard_url }}
+
+---
+© {{ app_name }}. All rights reserved.

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice {{ invoice.invoice_number }}</title>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header with Gradient -->
+        <div class="invoice-header">
+            <div class="header-content">
+                <div class="company-section">
+                    {% if logo_url %}
+                    <img src="{{ logo_url }}" alt="Company Logo" class="company-logo">
+                    {% endif %}
+                    <div class="company-info">
+                        <h1 class="company-name">{{ company.company_name if company else invoice.user.full_name }}</h1>
+                        {% if company and company.address %}
+                        <div class="company-details">
+                            {{ company.address }}, {{ company.city }}<br>
+                            {{ company.state }} {{ company.postal_code }}, {{ company.country }}
+                        </div>
+                        {% endif %}
+                        <div class="company-contact">
+                            {% if company and company.phone %}{{ company.phone }} | {% endif %}{{ invoice.user.email }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="invoice-details">
+                    <div class="invoice-badge">
+                        <h2 class="invoice-title">INVOICE</h2>
+                        <div class="invoice-number">#{{ invoice.invoice_number }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice Meta Information -->
+        <div class="invoice-meta-section">
+            <div class="meta-card">
+                <div class="meta-item">
+                    <span class="meta-label">Invoice Date</span>
+                    <span class="meta-value">{{ format_date(invoice.invoice_date) }}</span>
+                </div>
+                {% if invoice.due_date %}
+                <div class="meta-item">
+                    <span class="meta-label">Due Date</span>
+                    <span class="meta-value">{{ format_date(invoice.due_date) }}</span>
+                </div>
+                {% endif %}
+                <div class="meta-item">
+                    <span class="meta-label">Status</span>
+                    <span class="meta-value status-{{ invoice.status.value }}">{{ invoice.status.value.title() }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Information Card -->
+        <div class="client-section">
+            <div class="section-header">
+                <h3>Bill To</h3>
+            </div>
+            <div class="client-card">
+                <div class="client-name">{{ invoice.client_name }}</div>
+                {% if invoice.client_address_line1 %}
+                <div class="client-address">
+                    {{ invoice.client_address_line1 }}
+                    {% if invoice.client_address_line2 %}, {{ invoice.client_address_line2 }}{% endif %}<br>
+                    {{ invoice.client_city }}, {{ invoice.client_state }} {{ invoice.client_postal_code }}
+                </div>
+                {% endif %}
+                <div class="client-contact">
+                    {% if invoice.client_email %}{{ invoice.client_email }}{% endif %}
+                    {% if invoice.client_phone %} | {{ invoice.client_phone }}{% endif %}
+                </div>
+                {% if invoice.client_gstin %}
+                <div class="client-tax">GSTIN: {{ invoice.client_gstin }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Items Table with Modern Design -->
+        <div class="items-section">
+            <div class="section-header">
+                <h3>Invoice Items</h3>
+            </div>
+            <div class="items-table-container">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th class="item-desc">Item Description</th>
+                            <th class="item-qty">Qty</th>
+                            <th class="item-rate">Unit Price</th>
+                            <th class="item-amount">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td class="item-desc">
+                                <div class="item-name">{{ item.description }}</div>
+                                {% if item.notes %}
+                                <div class="item-notes">{{ item.notes }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="item-qty">{{ item.quantity }}</td>
+                            <td class="item-rate">{{ format_currency(item.rate, invoice.currency_symbol) }}</td>
+                            <td class="item-amount">{{ format_currency(item.amount, invoice.currency_symbol) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modern Totals Section -->
+        <div class="totals-section">
+            <div class="totals-container">
+                <div class="subtotal-section">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal</span>
+                        <span class="total-value">{{ format_currency(invoice.subtotal, invoice.currency_symbol) }}</span>
+                    </div>
+                    
+                    {% if invoice.discount_amount > 0 %}
+                    <div class="total-row discount">
+                        <span class="total-label">Discount</span>
+                        <span class="total-value">-{{ format_currency(invoice.discount_amount, invoice.currency_symbol) }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if invoice.tax_amount > 0 %}
+                    <div class="total-row">
+                        <span class="total-label">Tax (GST)</span>
+                        <span class="total-value">{{ format_currency(invoice.tax_amount, invoice.currency_symbol) }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="grand-total-section">
+                    <div class="grand-total-row">
+                        <span class="grand-total-label">Total Amount</span>
+                        <span class="grand-total-value">{{ format_currency(invoice.grand_total, invoice.currency_symbol) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amount in Words with Modern Styling -->
+        <div class="amount-words-section">
+            <div class="amount-words-card">
+                <span class="amount-words-label">Amount in Words:</span>
+                <span class="amount-words-text">{{ number_to_words(invoice.grand_total) }}</span>
+            </div>
+        </div>
+
+        <!-- Tax Breakdown (if applicable) -->
+        {% if invoice.tax_amount > 0 %}
+        <div class="tax-section">
+            <div class="section-header">
+                <h3>Tax Breakdown</h3>
+            </div>
+            <div class="tax-table-container">
+                <table class="tax-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Taxable Amount</th>
+                            <th>CGST</th>
+                            <th>SGST</th>
+                            <th>IGST</th>
+                            <th>Total Tax</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        {% if item.cgst_amount > 0 or item.sgst_amount > 0 or item.igst_amount > 0 %}
+                        <tr>
+                            <td>{{ item.description }}</td>
+                            <td>{{ format_currency(item.amount, invoice.currency_symbol) }}</td>
+                            <td>{{ format_currency(item.cgst_amount, invoice.currency_symbol) }}</td>
+                            <td>{{ format_currency(item.sgst_amount, invoice.currency_symbol) }}</td>
+                            <td>{{ format_currency(item.igst_amount, invoice.currency_symbol) }}</td>
+                            <td>{{ format_currency(item.cgst_amount + item.sgst_amount + item.igst_amount, invoice.currency_symbol) }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Notes and Terms -->
+        {% if invoice.notes or invoice.terms %}
+        <div class="notes-terms-section">
+            {% if invoice.notes %}
+            <div class="notes-card">
+                <h4>Notes</h4>
+                <p>{{ invoice.notes }}</p>
+            </div>
+            {% endif %}
+            
+            {% if invoice.terms %}
+            <div class="terms-card">
+                <h4>Terms & Conditions</h4>
+                <p>{{ invoice.terms }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Modern Footer -->
+        <div class="invoice-footer">
+            <div class="footer-content">
+                {% if stamp_url %}
+                <div class="signature-section">
+                    <img src="{{ stamp_url }}" alt="Signature" class="signature-stamp">
+                    <div class="signature-text">Authorized Signature</div>
+                </div>
+                {% endif %}
+                
+                <div class="footer-info">
+                    {% if invoice.footer_message %}
+                    <div class="footer-message">{{ invoice.footer_message }}</div>
+                    {% endif %}
+                    <div class="generated-info">
+                        Generated on {{ generated_at.strftime('%B %d, %Y') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

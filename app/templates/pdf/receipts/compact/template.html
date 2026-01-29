@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Receipt {{ receipt.formatted_receipt_number }}</title>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <div class="title">RECEIPT</div>
+            <div class="number">{{ receipt.formatted_receipt_number }}</div>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Date:</span>
+                <span class="value">{{ format_date(receipt.receipt_date) }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Amount:</span>
+                <span class="value amount">{{ format_currency(receipt.total_amount, receipt.currency_symbol) }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">From:</span>
+                <span class="value">{{ receipt.company_name or "Invoice Generator SaaS" }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">To:</span>
+                <span class="value">{{ receipt.customer_name }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Method:</span>
+                <span class="value">{{ receipt.payment_method or 'N/A' }}</span>
+            </div>
+            {% if receipt.transaction_id %}
+            <div class="info-item">
+                <span class="label">Transaction:</span>
+                <span class="value">{{ receipt.transaction_id }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="description">
+            <div class="desc-label">Description:</div>
+            <div class="desc-text">{{ receipt.title }}</div>
+        </div>
+        
+        <div class="amount-words">
+            {{ number_to_words(receipt.total_amount) }}
+        </div>
+        
+        <div class="footer">
+            <div class="status">PAID</div>
+            <div class="generated">{{ format_date(generated_at) }}</div>
+        </div>
+    </div>
+</body>
+</html>

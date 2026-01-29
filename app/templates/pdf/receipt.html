@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - {{ receipt.formatted_receipt_number }}</title>
+</head>
+<body>
+    <!-- Watermark -->
+    <div class="watermark">PAID</div>
+    
+    <!-- Receipt Header -->
+    <div class="receipt-header">
+        <div class="receipt-title">PAYMENT RECEIPT</div>
+        <div class="receipt-number">{{ receipt.formatted_receipt_number }}</div>
+        <div class="receipt-date">Date: {{ format_date(receipt.receipt_date) }}</div>
+    </div>
+    
+    <!-- Company Information -->
+    <div class="company-section">
+        <div class="section-title">FROM</div>
+        <div class="company-name">{{ receipt.company_name or "Invoice Generator SaaS" }}</div>
+        {% if receipt.company_address %}
+        <div>{{ receipt.company_address }}</div>
+        {% endif %}
+        {% if receipt.company_gstin %}
+        <div><strong>GSTIN:</strong> {{ receipt.company_gstin }}</div>
+        {% endif %}
+        {% if receipt.company_pan %}
+        <div><strong>PAN:</strong> {{ receipt.company_pan }}</div>
+        {% endif %}
+    </div>
+    
+    <!-- Customer Information -->
+    <div class="customer-section">
+        <div class="section-title">TO</div>
+        <div><strong>{{ receipt.customer_name }}</strong></div>
+        <div>{{ receipt.customer_email }}</div>
+        {% if receipt.customer_phone %}
+        <div>Phone: {{ receipt.customer_phone }}</div>
+        {% endif %}
+        {% if receipt.customer_address %}
+        <div>{{ receipt.customer_address }}</div>
+        {% endif %}
+        {% if receipt.customer_gstin %}
+        <div><strong>GSTIN:</strong> {{ receipt.customer_gstin }}</div>
+        {% endif %}
+    </div>
+    
+    <!-- Payment Details -->
+    <div class="payment-details">
+        <div class="section-title">PAYMENT DETAILS</div>
+        <table class="payment-table">
+            <tr>
+                <td class="label">Receipt Type:</td>
+                <td class="value">{{ receipt.receipt_type.value.replace('_', ' ').title() }}</td>
+            </tr>
+            <tr>
+                <td class="label">Payment Date:</td>
+                <td class="value">{{ format_date(receipt.payment_date) if receipt.payment_date else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Payment Method:</td>
+                <td class="value">{{ receipt.payment_method or 'N/A' }}</td>
+            </tr>
+            {% if receipt.transaction_id %}
+            <tr>
+                <td class="label">Transaction ID:</td>
+                <td class="value">{{ receipt.transaction_id }}</td>
+            </tr>
+            {% endif %}
+            {% if receipt.razorpay_payment_id %}
+            <tr>
+                <td class="label">Razorpay Payment ID:</td>
+                <td class="value">{{ receipt.razorpay_payment_id }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td class="label">Description:</td>
+                <td class="value">{{ receipt.title }}</td>
+            </tr>
+            {% if receipt.description %}
+            <tr>
+                <td class="label">Details:</td>
+                <td class="value">{{ receipt.description }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+    
+    <!-- Amount Section -->
+    <div class="amount-section">
+        <div class="total-amount">{{ format_currency(receipt.total_amount, receipt.currency_symbol) }}</div>
+        <div class="amount-breakdown">
+            <div>Amount: {{ format_currency(receipt.amount, receipt.currency_symbol) }}</div>
+            {% if receipt.tax_amount > 0 %}
+            <div>Tax (GST): {{ format_currency(receipt.tax_amount, receipt.currency_symbol) }}</div>
+            {% endif %}
+            <div><strong>Total Paid: {{ format_currency(receipt.total_amount, receipt.currency_symbol) }}</strong></div>
+        </div>
+    </div>
+    
+    <!-- Amount in Words -->
+    <div class="amount-words">
+        <strong>Amount in Words:</strong> {{ number_to_words(receipt.total_amount) }}
+    </div>
+    
+    <!-- Tax Breakdown (if applicable) -->
+    {% if receipt.tax_amount > 0 %}
+    <div class="tax-section">
+        <div class="section-title">TAX BREAKDOWN</div>
+        <table class="tax-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Taxable Amount</th>
+                    <th>Tax Rate</th>
+                    <th>Tax Amount</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ receipt.title }}</td>
+                    <td>{{ format_currency(receipt.amount, receipt.currency_symbol) }}</td>
+                    <td>18%</td>
+                    <td>{{ format_currency(receipt.tax_amount, receipt.currency_symbol) }}</td>
+                    <td>{{ format_currency(receipt.total_amount, receipt.currency_symbol) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Notes -->
+    {% if receipt.notes %}
+    <div class="payment-details">
+        <div class="section-title">NOTES</div>
+        <p>{{ receipt.notes }}</p>
+    </div>
+    {% endif %}
+    
+    <!-- Signature Section -->
+    <div class="signature-section">
+        <div class="signature-line"></div>
+        <div class="signature-label">Authorized Signature</div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer-section">
+        <div class="footer-text">
+            <p><strong>Thank you for your payment!</strong></p>
+            <p>This is a computer-generated receipt and does not require a physical signature.</p>
+            <p>Generated on: {{ format_date(generated_at) }} at {{ generated_at.strftime('%H:%M:%S') }}</p>
+            {% if receipt.receipt_type.value == 'subscription_payment' %}
+            <p>This receipt is for subscription payment and is valid for tax purposes.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

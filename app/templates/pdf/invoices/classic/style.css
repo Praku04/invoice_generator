@@ -1,0 +1,385 @@
+@page {
+    size: A4;
+    margin: 1cm;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
+}
+
+.invoice-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+}
+
+.company-section {
+    flex: 1;
+    max-width: 60%;
+}
+
+.company-logo {
+    max-width: 150px;
+    max-height: 80px;
+    margin-bottom: 15px;
+}
+
+.company-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.company-address,
+.company-contact,
+.company-tax {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.invoice-details {
+    text-align: right;
+    flex: 1;
+    max-width: 35%;
+}
+
+.invoice-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.invoice-meta div {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Bill To Section */
+.bill-to-section {
+    margin-bottom: 30px;
+}
+
+.bill-to h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.client-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.client-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.client-address,
+.client-contact,
+.client-tax {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Items Table */
+.items-section {
+    margin-bottom: 30px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.items-table th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #007bff;
+}
+
+.items-table td {
+    padding: 10px 8px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.items-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.item-desc {
+    width: 50%;
+}
+
+.item-qty {
+    width: 15%;
+    text-align: center;
+}
+
+.item-rate {
+    width: 20%;
+    text-align: right;
+}
+
+.item-amount {
+    width: 20%;
+    text-align: right;
+}
+
+.item-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.item-notes {
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Totals Section */
+.totals-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+}
+
+.totals-table {
+    min-width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.total-row:last-child {
+    border-bottom: none;
+}
+
+.grand-total {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.total-label {
+    font-weight: bold;
+}
+
+.total-value {
+    text-align: right;
+}
+
+/* Tax Breakdown */
+.tax-breakdown {
+    margin-bottom: 30px;
+}
+
+.tax-breakdown h4 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.tax-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.tax-table th {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #6c757d;
+}
+
+.tax-table td {
+    padding: 6px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.tax-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Amount in Words */
+.amount-words {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    border-left: 4px solid #007bff;
+    font-style: italic;
+}
+
+/* Notes and Terms */
+.notes-section,
+.terms-section {
+    margin-bottom: 20px;
+}
+
+.notes-section h4,
+.terms-section h4 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+}
+
+.notes-section p,
+.terms-section p {
+    line-height: 1.5;
+    color: #555;
+}
+
+/* Footer */
+.invoice-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.signature-section {
+    text-align: center;
+}
+
+.company-stamp {
+    max-width: 100px;
+    max-height: 60px;
+    margin-bottom: 10px;
+}
+
+.signature-line {
+    border-top: 1px solid #333;
+    width: 150px;
+    padding-top: 5px;
+    font-size: 11px;
+    color: #666;
+}
+
+.footer-message {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.generated-info {
+    font-size: 10px;
+    color: #999;
+    text-align: right;
+}
+
+/* Print Optimizations */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .invoice-container {
+        max-width: none;
+    }
+    
+    .invoice-header {
+        page-break-inside: avoid;
+    }
+    
+    .items-table {
+        page-break-inside: auto;
+    }
+    
+    .items-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    
+    .totals-section {
+        page-break-inside: avoid;
+    }
+    
+    .invoice-footer {
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .invoice-header {
+        flex-direction: column;
+    }
+    
+    .company-section,
+    .invoice-details {
+        max-width: 100%;
+    }
+    
+    .invoice-details {
+        text-align: left;
+        margin-top: 20px;
+    }
+    
+    .items-table {
+        font-size: 11px;
+    }
+    
+    .invoice-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .signature-section {
+        margin-bottom: 20px;
+    }
+}

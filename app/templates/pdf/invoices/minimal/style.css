@@ -1,0 +1,19 @@
+@page { size: A4; margin: 2cm; }
+body { font-family: 'DejaVu Sans', sans-serif; font-size: 14px; line-height: 1.6; color: #333; }
+.invoice-container { max-width: 800px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+.header h1 { font-size: 36px; margin: 0; color: #333; font-weight: 300; }
+.invoice-number { font-size: 18px; color: #666; margin-top: 10px; }
+.parties { display: flex; justify-content: space-between; margin-bottom: 40px; }
+.from, .to { flex: 1; }
+.from h3, .to h3 { font-size: 16px; color: #666; margin-bottom: 10px; font-weight: 400; }
+.company-name, .client-name { font-size: 18px; font-weight: 500; margin-bottom: 5px; }
+.details { margin-bottom: 30px; font-size: 14px; color: #666; }
+.items { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+.items th { background: #f8f9fa; padding: 15px 10px; text-align: left; font-weight: 500; border-bottom: 1px solid #eee; }
+.items td { padding: 15px 10px; border-bottom: 1px solid #f0f0f0; }
+.items tbody tr:hover { background: #fafafa; }
+.totals { text-align: right; margin-bottom: 30px; }
+.total-line { display: flex; justify-content: space-between; padding: 8px 0; max-width: 300px; margin-left: auto; }
+.total-line.grand { font-size: 18px; font-weight: 600; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px; }
+.notes { margin-top: 40px; padding: 20px; background: #f8f9fa; border-left: 3px solid #333; font-style: italic; }

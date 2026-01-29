@@ -1,0 +1,16 @@
+Welcome to {{ app_name }}!
+
+Hello {{ user.full_name }},
+
+Thank you for signing up for {{ app_name }}! To complete your registration, please verify your email address.
+
+Click this link to verify your email:
+{{ verification_url }}
+
+Once verified, you'll be able to:
+- Create and send professional invoices
+- Track payments and manage clients
+- Access premium features with a subscription
+
+---
+© {{ app_name }}. All rights reserved.

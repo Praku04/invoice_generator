@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to {{ app_name }}!</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #007bff; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f8f9fa; }
+        .button { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 10px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .feature { background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border-left: 4px solid #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to {{ app_name }}!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ user.full_name }},</p>
+            
+            <p>Welcome to {{ app_name }}! Your account has been successfully created and verified.</p>
+            
+            <h3>What you can do now:</h3>
+            
+            <div class="feature">
+                <h4>📄 Create Professional Invoices</h4>
+                <p>Design and customize invoices with your company branding</p>
+            </div>
+            
+            <div class="feature">
+                <h4>📧 Send Invoices Directly</h4>
+                <p>Email invoices to clients with secure download links</p>
+            </div>
+            
+            <div class="feature">
+                <h4>💰 Track Payments</h4>
+                <p>Monitor payment status and manage your cash flow</p>
+            </div>
+            
+            <div class="feature">
+                <h4>🚀 Upgrade for More</h4>
+                <p>Get unlimited invoices and premium features with our paid plan</p>
+            </div>
+            
+            <p>Ready to get started?</p>
+            <a href="{{ dashboard_url }}" class="button">Go to Dashboard</a>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ app_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

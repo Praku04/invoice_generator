@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ invoice.invoice_number }}</title>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <h1>INVOICE</h1>
+            <div class="invoice-number">#{{ invoice.invoice_number }}</div>
+        </div>
+        
+        <div class="parties">
+            <div class="from">
+                <h3>From</h3>
+                <div class="company-name">{{ company.company_name if company else invoice.user.full_name }}</div>
+                {% if company and company.address %}
+                <div>{{ company.address }}, {{ company.city }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="to">
+                <h3>To</h3>
+                <div class="client-name">{{ invoice.client_name }}</div>
+                {% if invoice.client_address_line1 %}
+                <div>{{ invoice.client_address_line1 }}, {{ invoice.client_city }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="details">
+            <div>Date: {{ format_date(invoice.invoice_date) }}</div>
+            {% if invoice.due_date %}
+            <div>Due: {{ format_date(invoice.due_date) }}</div>
+            {% endif %}
+        </div>
+        
+        <table class="items">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ format_currency(item.rate, invoice.currency_symbol) }}</td>
+                    <td>{{ format_currency(item.amount, invoice.currency_symbol) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="totals">
+            <div class="total-line">
+                <span>Subtotal:</span>
+                <span>{{ format_currency(invoice.subtotal, invoice.currency_symbol) }}</span>
+            </div>
+            {% if invoice.tax_amount > 0 %}
+            <div class="total-line">
+                <span>Tax:</span>
+                <span>{{ format_currency(invoice.tax_amount, invoice.currency_symbol) }}</span>
+            </div>
+            {% endif %}
+            <div class="total-line grand">
+                <span>Total:</span>
+                <span>{{ format_currency(invoice.grand_total, invoice.currency_symbol) }}</span>
+            </div>
+        </div>
+        
+        {% if invoice.notes %}
+        <div class="notes">{{ invoice.notes }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

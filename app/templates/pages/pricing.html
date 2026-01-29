@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold mb-4">Simple, Transparent Pricing</h1>
+                <p class="lead text-muted mb-4">Choose the plan that's right for your business. Start free and upgrade when you need more features.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center g-4">
+            <!-- Free Plan -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card h-100">
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title">Free</h4>
+                        <div class="display-6 fw-bold text-primary mb-3">₹0<small class="fs-6 text-muted">/month</small></div>
+                        <p class="text-muted mb-4">Perfect for getting started</p>
+                        
+                        <ul class="pricing-feature-list mb-4">
+                            <li><i class="bi bi-check text-success me-2"></i>3 invoices per month</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Basic invoice templates</li>
+                            <li><i class="bi bi-check text-success me-2"></i>GST calculations</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Client management</li>
+                            <li><i class="bi bi-x text-danger me-2"></i>No PDF download</li>
+                            <li><i class="bi bi-x text-danger me-2"></i>No custom branding</li>
+                            <li><i class="bi bi-x text-danger me-2"></i>No logo/stamp upload</li>
+                            <li><i class="bi bi-x text-danger me-2"></i>Email support only</li>
+                        </ul>
+                        
+                        {% if current_user %}
+                        <button class="btn btn-outline-primary w-100" disabled>Current Plan</button>
+                        {% else %}
+                        <a href="/register" class="btn btn-outline-primary w-100">Get Started Free</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pro Plan -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card featured h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="badge bg-primary mb-3">Most Popular</div>
+                        <h4 class="card-title">Pro</h4>
+                        <div class="display-6 fw-bold text-primary mb-3">₹99<small class="fs-6 text-muted">/month</small></div>
+                        <p class="text-muted mb-4">Everything you need to grow</p>
+                        
+                        <ul class="pricing-feature-list mb-4">
+                            <li><i class="bi bi-check text-success me-2"></i>Unlimited invoices</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Professional templates</li>
+                            <li><i class="bi bi-check text-success me-2"></i>PDF download & generation</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Custom logo upload</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Digital stamp/signature</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Advanced GST features</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Invoice customization</li>
+                            <li><i class="bi bi-check text-success me-2"></i>Priority email support</li>
+                        </ul>
+                        
+                        {% if current_user %}
+                        <button class="btn btn-primary w-100" onclick="SubscriptionManager.subscribe(2)">
+                            Upgrade to Pro
+                        </button>
+                        {% else %}
+                        <a href="/register" class="btn btn-primary w-100">Start Free Trial</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Money Back Guarantee -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <div class="alert alert-info d-inline-flex align-items-center">
+                    <i class="bi bi-shield-check me-2"></i>
+                    <span>30-day money-back guarantee on all paid plans</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Comparison -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">Feature Comparison</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered bg-white">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Features</th>
+                                <th class="text-center">Free</th>
+                                <th class="text-center">Pro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Monthly Invoices</strong></td>
+                                <td class="text-center">3</td>
+                                <td class="text-center">Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PDF Download</strong></td>
+                                <td class="text-center"><i class="bi bi-x text-danger"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Custom Logo</strong></td>
+                                <td class="text-center"><i class="bi bi-x text-danger"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Digital Stamp/Signature</strong></td>
+                                <td class="text-center"><i class="bi bi-x text-danger"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>GST Calculations</strong></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Invoice Templates</strong></td>
+                                <td class="text-center">Basic</td>
+                                <td class="text-center">Professional</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Client Management</strong></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Invoice Customization</strong></td>
+                                <td class="text-center">Limited</td>
+                                <td class="text-center">Full</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Support</strong></td>
+                                <td class="text-center">Email</td>
+                                <td class="text-center">Priority Email</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Export</strong></td>
+                                <td class="text-center"><i class="bi bi-x text-danger"></i></td>
+                                <td class="text-center"><i class="bi bi-check text-success"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="text-center mb-5">Frequently Asked Questions</h2>
+                
+                <div class="accordion" id="pricingFAQ">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Can I change plans anytime?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and billing is prorated accordingly.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Is there a free trial for the Pro plan?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Yes, you can start with our Free plan and upgrade to Pro anytime. We also offer a 30-day money-back guarantee on all paid plans.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                We accept all major credit/debit cards, UPI, net banking, and digital wallets through our secure payment partner Razorpay.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                Can I cancel my subscription?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Yes, you can cancel your subscription at any time from your account dashboard. You'll continue to have access to Pro features until the end of your billing period.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                Is my data safe and secure?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Absolutely. We use industry-standard encryption, secure servers, and follow best practices for data protection. Your data is never shared with third parties.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                Do you offer discounts for annual plans?
+                            </button>
+                        </h2>
+                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Currently, we offer monthly billing only. However, we're working on annual plans with discounts. Sign up for our newsletter to be notified when they're available.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+                <p class="lead mb-4">Join thousands of businesses already using Invoice Generator SaaS to streamline their invoicing process.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    {% if current_user %}
+                    <a href="/dashboard" class="btn btn-light btn-lg">Go to Dashboard</a>
+                    {% else %}
+                    <a href="/register" class="btn btn-light btn-lg">Start Free Trial</a>
+                    <a href="/contact" class="btn btn-outline-light btn-lg">Contact Sales</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
