@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Email Verification</h4>
+                </div>
+                <div class="card-body text-center">
+                    {% if token %}
+                    <div id="verificationContent">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Verifying...</span>
+                        </div>
+                        <p>Verifying your email address...</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <h5>Invalid or Missing Verification Token</h5>
+                        <p>The email verification link appears to be invalid or expired.</p>
+                        <a href="/login" class="btn btn-primary">Back to Login</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+{% if token %}
+// Auto-verify email when page loads
+document.addEventListener('DOMContentLoaded', async function() {
+    const token = "{{ token }}";
+    
+    try {
+        const response = await fetch('/api/auth/verify-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: token
+            })
+        });
+        
+        const data = await response.json();
+        const contentDiv = document.getElementById('verificationContent');
+        
+        if (response.ok) {
+            contentDiv.innerHTML = `
+                <div class="text-success mb-3">
+                    <i class="fas fa-check-circle fa-3x"></i>
+                </div>
+                <h5 class="text-success">Email Verified Successfully!</h5>
+                <p>Your email address has been verified. You can now access all features.</p>
+                <a href="/login" class="btn btn-success">Continue to Login</a>
+            `;
+        } else {
+            contentDiv.innerHTML = `
+                <div class="text-danger mb-3">
+                    <i class="fas fa-times-circle fa-3x"></i>
+                </div>
+                <h5 class="text-danger">Verification Failed</h5>
+                <p>${data.detail || 'Email verification failed. The token may be expired or invalid.'}</p>
+                <a href="/login" class="btn btn-primary">Back to Login</a>
+            `;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        const contentDiv = document.getElementById('verificationContent');
+        contentDiv.innerHTML = `
+            <div class="text-danger mb-3">
+                <i class="fas fa-exclamation-triangle fa-3x"></i>
+            </div>
+            <h5 class="text-danger">Verification Error</h5>
+            <p>An error occurred while verifying your email. Please try again later.</p>
+            <a href="/login" class="btn btn-primary">Back to Login</a>
+        `;
+    }
+});
+{% endif %}
+</script>
+{% endblock %}

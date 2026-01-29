@@ -74,6 +74,26 @@ def register_page(request: Request, current_user: Optional[User] = Depends(get_o
     })
 
 
+@router.get("/reset-password", response_class=HTMLResponse)
+def reset_password_page(request: Request, token: str = None):
+    """Password reset page."""
+    return templates.TemplateResponse("auth/reset_password.html", {
+        "request": request,
+        "title": "Reset Password",
+        "token": token
+    })
+
+
+@router.get("/verify-email", response_class=HTMLResponse)
+def verify_email_page(request: Request, token: str = None):
+    """Email verification page."""
+    return templates.TemplateResponse("auth/verify_email.html", {
+        "request": request,
+        "title": "Verify Email",
+        "token": token
+    })
+
+
 @router.get("/dashboard", response_class=HTMLResponse)
 def dashboard(
     request: Request,
