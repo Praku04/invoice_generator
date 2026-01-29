@@ -41,7 +41,7 @@ class Subscription(Base):
     user = relationship("User", back_populates="subscriptions")
     plan = relationship("Plan", back_populates="subscriptions")
     payments = relationship("Payment", back_populates="subscription")
-    receipts = relationship("PaymentReceipt", back_populates="subscription")
+    payment_receipts = relationship("PaymentReceipt", back_populates="subscription")
     
     def __repr__(self):
         return f"<Subscription(id={self.id}, user_id={self.user_id}, status='{self.status}')>"
