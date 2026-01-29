@@ -33,8 +33,8 @@ class Settings(BaseSettings):
     app_name: str = "Invoice Generator SaaS"
     app_version: str = "1.0.0"
     app_base_url: str = "http://localhost:8000"
-    debug: bool = False
-    allowed_hosts: str = "localhost,127.0.0.1"
+    debug: bool = True  # Enable debug mode to allow all hosts
+    allowed_hosts: str = "localhost,127.0.0.1,72.60.222.154,*"
     
     # File Upload
     max_file_size: int = 5242880  # 5MB

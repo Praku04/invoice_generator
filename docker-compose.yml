@@ -26,6 +26,8 @@ services:
       - DATABASE_URL=postgresql://postgres:invoicedb123@db:5432/invoicedb
       - SECRET_KEY=your-super-secret-key-change-this-in-production
       - JWT_SECRET_KEY=your-jwt-secret-key-change-this-in-production
+      - DEBUG=true
+      - ALLOWED_HOSTS=localhost,127.0.0.1,72.60.222.154,*
       - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
       - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
       - RAZORPAY_WEBHOOK_SECRET=${RAZORPAY_WEBHOOK_SECRET}
