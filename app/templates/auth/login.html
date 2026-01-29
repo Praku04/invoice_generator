@@ -73,6 +73,32 @@
 
 {% block extra_js %}
 <script>
+// Ensure functions are available
+function showAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container') || document.body;
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+function getToken() {
+    return localStorage.getItem('access_token');
+}
+
+function setToken(token) {
+    localStorage.setItem('access_token', token);
+}
+
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -104,12 +130,17 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             // Store token
             setToken(result.access_token);
             
+            showAlert('Login successful! Redirecting...', 'success');
+            
             // Redirect to dashboard
-            window.location.href = '/dashboard';
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1000);
         } else {
             showAlert(result.detail || 'Login failed', 'danger');
         }
     } catch (error) {
+        console.error('Login error:', error);
         showAlert('Network error. Please try again.', 'danger');
     } finally {
         // Hide loading state
