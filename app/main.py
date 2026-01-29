@@ -80,8 +80,22 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     """Handle general exceptions."""
+    import traceback
+    
+    # Log the error for debugging
+    print(f"Unhandled exception: {exc}")
+    print(f"Traceback: {traceback.format_exc()}")
+    
     if settings.debug:
-        raise exc
+        # In debug mode, return detailed error information
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": f"Internal server error: {str(exc)}",
+                "type": type(exc).__name__,
+                "traceback": traceback.format_exc().split('\n') if settings.debug else None
+            }
+        )
     
     return JSONResponse(
         status_code=500,
@@ -92,53 +106,63 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.on_event("startup")
 async def startup_event():
     """Initialize application on startup."""
-    # Create database tables
-    create_tables()
-    
-    # Create default plans if they don't exist
-    from app.database import SessionLocal
-    from app.models.plan import Plan
-    
-    db = SessionLocal()
     try:
-        # Check if plans exist
-        existing_plans = db.query(Plan).count()
+        # Create database tables
+        create_tables()
+        print("Database tables created successfully")
         
-        if existing_plans == 0:
-            # Create default plans
-            free_plan = Plan(
-                name="Free",
-                description="Free plan with basic features",
-                price=0,
-                currency="INR",
-                interval="monthly",
-                invoice_limit=3,
-                features='["Basic invoicing", "3 invoices per month", "Basic templates"]',
-                is_active=True
-            )
-            
-            pro_plan = Plan(
-                name="Pro",
-                description="Professional plan with all features",
-                price=settings.paid_plan_price,
-                currency="INR",
-                interval="monthly",
-                invoice_limit=None,  # Unlimited
-                features='["Unlimited invoices", "PDF download", "Custom branding", "GST calculations", "Priority support"]',
-                is_active=True,
-                razorpay_plan_id="plan_pro_monthly"  # Set this to your actual Razorpay plan ID
-            )
-            
-            db.add(free_plan)
-            db.add(pro_plan)
-            db.commit()
-            
-            print("Default plans created successfully")
+        # Create default plans if they don't exist
+        from app.database import SessionLocal
+        from app.models.plan import Plan
         
+        db = SessionLocal()
+        try:
+            # Check if plans exist
+            existing_plans = db.query(Plan).count()
+            print(f"Found {existing_plans} existing plans")
+            
+            if existing_plans == 0:
+                # Create default plans
+                free_plan = Plan(
+                    name="Free",
+                    description="Free plan with basic features",
+                    price=0,
+                    currency="INR",
+                    interval="monthly",
+                    invoice_limit=3,
+                    features='["Basic invoicing", "3 invoices per month", "Basic templates"]',
+                    is_active=True
+                )
+                
+                pro_plan = Plan(
+                    name="Pro",
+                    description="Professional plan with all features",
+                    price=settings.paid_plan_price,
+                    currency="INR",
+                    interval="monthly",
+                    invoice_limit=None,  # Unlimited
+                    features='["Unlimited invoices", "PDF download", "Custom branding", "GST calculations", "Priority support"]',
+                    is_active=True,
+                    razorpay_plan_id="plan_pro_monthly"  # Set this to your actual Razorpay plan ID
+                )
+                
+                db.add(free_plan)
+                db.add(pro_plan)
+                db.commit()
+                
+                print("Default plans created successfully")
+            else:
+                print("Plans already exist, skipping creation")
+            
+        except Exception as e:
+            print(f"Error creating default plans: {e}")
+            db.rollback()
+        finally:
+            db.close()
+            
     except Exception as e:
-        print(f"Error creating default plans: {e}")
-    finally:
-        db.close()
+        print(f"Error in startup event: {e}")
+        # Don't raise the exception to prevent app from failing to start
 
 # Health check endpoint
 @app.get("/health")
@@ -151,6 +175,57 @@ async def health_check():
 async def test_endpoint():
     """Simple test endpoint."""
     return {"message": "Backend is working!", "timestamp": "2026-01-29"}
+
+# Database test endpoint
+@app.get("/test/db")
+async def test_database():
+    """Test database connection."""
+    try:
+        from app.database import SessionLocal
+        db = SessionLocal()
+        try:
+            # Simple query to test connection
+            result = db.execute("SELECT 1 as test").fetchone()
+            return {"status": "success", "message": "Database connection working", "result": result[0]}
+        finally:
+            db.close()
+    except Exception as e:
+        return {"status": "error", "message": f"Database connection failed: {str(e)}"}
+
+# Template test endpoint
+@app.get("/test/template")
+async def test_template(request: Request):
+    """Test template rendering."""
+    try:
+        from fastapi.templating import Jinja2Templates
+        templates = Jinja2Templates(directory="app/templates")
+        return templates.TemplateResponse("pages/home.html", {
+            "request": request,
+            "title": "Test Page"
+        })
+    except Exception as e:
+        return {"status": "error", "message": f"Template rendering failed: {str(e)}"}
+
+# Plans test endpoint
+@app.get("/test/plans")
+async def test_plans():
+    """Test plans creation."""
+    try:
+        from app.database import SessionLocal
+        from app.models.plan import Plan
+        
+        db = SessionLocal()
+        try:
+            plans = db.query(Plan).all()
+            return {
+                "status": "success", 
+                "count": len(plans),
+                "plans": [{"id": p.id, "name": p.name, "price": p.price} for p in plans]
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        return {"status": "error", "message": f"Plans query failed: {str(e)}"}
 
 # Root redirect
 @app.get("/favicon.ico")
