@@ -1,7 +1,7 @@
 """Dependency injection utilities."""
 
 from typing import Generator, Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -10,12 +10,13 @@ from app.core.security import verify_token
 from app.models.user import User, UserRole
 from app.services.user_service import UserService
 
-# Security scheme
-security = HTTPBearer()
+# Security schemes
+security = HTTPBearer(auto_error=False)  # Don't auto-error for optional auth
+security_required = HTTPBearer()  # Auto-error for required auth
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: HTTPAuthorizationCredentials = Depends(security_required),
     db: Session = Depends(get_db)
 ) -> User:
     """Get current authenticated user."""
@@ -71,6 +72,7 @@ def get_current_admin_user(
 
 
 def get_optional_current_user(
+    request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db)
 ) -> Optional[User]:
@@ -91,7 +93,7 @@ def get_optional_current_user(
         
         if user and user.is_active:
             return user
-    except:
+    except Exception:
         pass
     
     return None
