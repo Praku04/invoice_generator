@@ -12,6 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install system dependencies including WeasyPrint build requirements
 RUN apt-get update && apt-get install -y \
     build-essential \
+    pkg-config \
     libpq-dev \
     libffi-dev \
     libssl-dev \
@@ -25,6 +26,9 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf-2.0-dev \
     libglib2.0-dev \
     libgirepository1.0-dev \
+    libfreetype6-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment
@@ -59,6 +63,12 @@ RUN apt-get update && apt-get install -y \
     libpangocairo-1.0-0 \
     libgdk-pixbuf-2.0-0 \
     libffi8 \
+    libfreetype6 \
+    libharfbuzz0b \
+    libfribidi0 \
+    fontconfig \
+    fonts-dejavu-core \
+    fonts-liberation \
     shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 
@@ -75,8 +85,8 @@ WORKDIR /app
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p uploads/logos uploads/stamps uploads/pdfs uploads/documents && \
-    chown -R appuser:appuser /app
+RUN mkdir -p uploads/logos uploads/stamps uploads/pdfs uploads/documents /var/cache/fontconfig && \
+    chown -R appuser:appuser /app /var/cache/fontconfig
 
 # Switch to non-root user
 USER appuser
