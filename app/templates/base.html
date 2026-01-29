@@ -228,11 +228,11 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    {% if current_user %}
+    <!-- Main Content Container -->
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
+            {% if current_user %}
+            <!-- Sidebar for authenticated users -->
             <div class="col-md-3 col-lg-2 px-0">
                 <div class="sidebar">
                     <nav class="nav flex-column py-3">
@@ -255,18 +255,20 @@
                 </div>
             </div>
             
-            <!-- Main Content Area -->
+            <!-- Content area for authenticated users -->
             <div class="col-md-9 col-lg-10">
                 <div class="main-content">
                     {% block content %}{% endblock %}
                 </div>
             </div>
+            {% else %}
+            <!-- Full width content for non-authenticated users -->
+            <div class="col-12">
+                {% block content %}{% endblock %}
+            </div>
+            {% endif %}
         </div>
     </div>
-    {% else %}
-    <!-- Full Width Content for Non-Authenticated Users -->
-    {% block content %}{% endblock %}
-    {% endif %}
 
     <!-- Footer -->
     {% if not current_user %}
