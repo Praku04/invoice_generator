@@ -182,10 +182,11 @@ async def test_database():
     """Test database connection."""
     try:
         from app.database import SessionLocal
+        from sqlalchemy import text
         db = SessionLocal()
         try:
-            # Simple query to test connection
-            result = db.execute("SELECT 1 as test").fetchone()
+            # Simple query to test connection using text() wrapper
+            result = db.execute(text("SELECT 1 as test")).fetchone()
             return {"status": "success", "message": "Database connection working", "result": result[0]}
         finally:
             db.close()
