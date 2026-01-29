@@ -229,9 +229,9 @@
     </nav>
 
     <!-- Main Content -->
+    {% if current_user %}
     <div class="container-fluid">
         <div class="row">
-            {% if current_user %}
             <!-- Sidebar -->
             <div class="col-md-3 col-lg-2 px-0">
                 <div class="sidebar">
@@ -261,14 +261,12 @@
                     {% block content %}{% endblock %}
                 </div>
             </div>
-            {% else %}
-            <!-- Full Width Content for Non-Authenticated Users -->
-            <div class="col-12">
-                {% block content %}{% endblock %}
-            </div>
-            {% endif %}
         </div>
     </div>
+    {% else %}
+    <!-- Full Width Content for Non-Authenticated Users -->
+    {% block content %}{% endblock %}
+    {% endif %}
 
     <!-- Footer -->
     {% if not current_user %}
