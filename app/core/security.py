@@ -10,44 +10,68 @@ import string
 
 from app.config import settings
 
-# Password hashing context with multiple schemes for compatibility
-try:
-    # Try bcrypt first
-    pwd_context = CryptContext(
-        schemes=["bcrypt"], 
-        deprecated="auto",
-        bcrypt__rounds=12
-    )
-    # Test if bcrypt works
-    pwd_context.hash("test")
-except Exception:
-    # Fallback to pbkdf2_sha256 if bcrypt has issues
-    pwd_context = CryptContext(
-        schemes=["pbkdf2_sha256"], 
-        deprecated="auto",
-        pbkdf2_sha256__rounds=100000
-    )
+"""Security utilities for authentication and authorization."""
+
+from datetime import datetime, timedelta
+from typing import Optional, Union
+from jose import JWTError, jwt
+from fastapi import HTTPException, status
+import secrets
+import string
+import hashlib
+import hmac
+
+from app.config import settings
+
+# Use a simple but secure password hashing implementation
+# to avoid bcrypt version compatibility issues
+class SimplePasswordHasher:
+    """Simple password hasher using PBKDF2."""
+    
+    def __init__(self):
+        self.algorithm = 'pbkdf2_sha256'
+        self.iterations = 100000
+        
+    def hash(self, password: str) -> str:
+        """Hash a password using PBKDF2."""
+        salt = secrets.token_hex(16)
+        pwdhash = hashlib.pbkdf2_hmac('sha256', 
+                                     password.encode('utf-8'), 
+                                     salt.encode('utf-8'), 
+                                     self.iterations)
+        return f"{self.algorithm}${self.iterations}${salt}${pwdhash.hex()}"
+    
+    def verify(self, password: str, hashed: str) -> bool:
+        """Verify a password against its hash."""
+        try:
+            parts = hashed.split('$')
+            if len(parts) != 4:
+                return False
+            
+            algorithm, iterations, salt, stored_hash = parts
+            iterations = int(iterations)
+            
+            pwdhash = hashlib.pbkdf2_hmac('sha256',
+                                         password.encode('utf-8'),
+                                         salt.encode('utf-8'),
+                                         iterations)
+            
+            return hmac.compare_digest(pwdhash.hex(), stored_hash)
+        except Exception:
+            return False
+
+# Initialize the password hasher
+pwd_hasher = SimplePasswordHasher()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain password against its hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_hasher.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
     """Generate password hash."""
-    try:
-        # For bcrypt compatibility, truncate to 72 bytes if necessary
-        password_bytes = password.encode('utf-8')
-        if len(password_bytes) > 72:
-            password = password_bytes[:72].decode('utf-8', errors='ignore')
-        return pwd_context.hash(password)
-    except Exception as e:
-        # If hashing fails, try with a simpler approach
-        print(f"Password hashing error: {e}")
-        # Fallback to a basic hash if needed
-        import hashlib
-        return hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'salt', 100000).hex()
+    return pwd_hasher.hash(password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
