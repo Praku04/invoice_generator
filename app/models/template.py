@@ -1,6 +1,6 @@
 """Template model for managing invoice and receipt templates."""
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Enum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -112,14 +112,15 @@ class UserTemplatePreference(Base):
     __tablename__ = "user_template_preferences"
     
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, nullable=False, index=True)
-    template_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    template_id = Column(Integer, ForeignKey("templates.id"), nullable=False)
     category = Column(Enum(TemplateCategory), nullable=False)
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
+    user = relationship("User", back_populates="template_preferences")
     template = relationship("Template", back_populates="user_preferences")
     
     def __repr__(self):

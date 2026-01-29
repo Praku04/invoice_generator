@@ -45,6 +45,7 @@ class User(Base):
     admin_actions = relationship("AdminAction", foreign_keys="AdminAction.admin_id", back_populates="admin")
     secure_download_tokens = relationship("SecureDownloadToken", back_populates="user")
     payment_receipts = relationship("PaymentReceipt", foreign_keys="PaymentReceipt.user_id", back_populates="user")
+    template_preferences = relationship("UserTemplatePreference", back_populates="user")
     
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', role='{self.role}')>"

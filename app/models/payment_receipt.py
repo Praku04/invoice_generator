@@ -43,6 +43,7 @@ class PaymentReceipt(Base):
     payment_id = Column(Integer, ForeignKey("payments.id"), nullable=True)
     subscription_id = Column(Integer, ForeignKey("subscriptions.id"), nullable=True)
     invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=True)
+    template_id = Column(Integer, ForeignKey("templates.id"), nullable=True)
     
     # Dates
     receipt_date = Column(DateTime, nullable=False, default=func.now())
@@ -105,6 +106,7 @@ class PaymentReceipt(Base):
     payment = relationship("Payment", back_populates="payment_receipts")
     subscription = relationship("Subscription", back_populates="payment_receipts")
     invoice = relationship("Invoice", back_populates="payment_receipts")
+    template = relationship("Template", back_populates="receipts")
     
     # Admin relationships
     admin_reviewer = relationship("User", foreign_keys=[admin_reviewed_by])
