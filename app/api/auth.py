@@ -1,7 +1,7 @@
 """Authentication API routes."""
 
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -55,7 +55,7 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-def login(user_data: UserLogin, db: Session = Depends(get_db)):
+def login(user_data: UserLogin, response: Response, db: Session = Depends(get_db)):
     """Authenticate user and return access token."""
     user_service = UserService(db)
     user = user_service.authenticate_user(user_data.email, user_data.password)
@@ -79,11 +79,28 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
         expires_delta=access_token_expires
     )
     
+    # Set HTTP-only cookie for web authentication
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        max_age=settings.jwt_expire_minutes * 60,
+        httponly=True,
+        secure=False,  # Set to True in production with HTTPS
+        samesite="lax"
+    )
+    
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "expires_in": settings.jwt_expire_minutes * 60
     }
+
+
+@router.post("/logout")
+def logout(response: Response):
+    """Logout user by clearing the authentication cookie."""
+    response.delete_cookie(key="access_token")
+    return {"message": "Logged out successfully"}
 
 
 @router.post("/verify-email")

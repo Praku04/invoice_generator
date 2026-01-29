@@ -8,7 +8,7 @@ from typing import Optional
 import os
 
 from app.database import get_db
-from app.core.deps import get_optional_current_user, get_current_active_user
+from app.core.deps import get_optional_current_user, get_current_user_from_cookie_or_header
 from app.services.user_service import UserService
 from app.services.subscription_service import SubscriptionService
 from app.services.invoice_service import InvoiceService
@@ -97,7 +97,7 @@ def verify_email_page(request: Request, token: str = None):
 @router.get("/dashboard", response_class=HTMLResponse)
 def dashboard(
     request: Request,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_from_cookie_or_header),
     db: Session = Depends(get_db)
 ):
     """User dashboard."""
@@ -140,7 +140,7 @@ def dashboard(
 @router.get("/invoices", response_class=HTMLResponse)
 def invoices_list(
     request: Request,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_from_cookie_or_header),
     db: Session = Depends(get_db)
 ):
     """Invoices list page."""
@@ -158,7 +158,7 @@ def invoices_list(
 @router.get("/invoices/create", response_class=HTMLResponse)
 def create_invoice_page(
     request: Request,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_from_cookie_or_header),
     db: Session = Depends(get_db)
 ):
     """Create invoice page."""
@@ -185,7 +185,7 @@ def create_invoice_page(
 def view_invoice(
     invoice_id: int,
     request: Request,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_from_cookie_or_header),
     db: Session = Depends(get_db)
 ):
     """View invoice page."""
@@ -206,7 +206,7 @@ def view_invoice(
 @router.get("/settings", response_class=HTMLResponse)
 def settings_page(
     request: Request,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_user_from_cookie_or_header)
 ):
     """Settings page."""
     return templates.TemplateResponse("settings/index.html", {
@@ -219,7 +219,7 @@ def settings_page(
 @router.get("/subscription", response_class=HTMLResponse)
 def subscription_page(
     request: Request,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_from_cookie_or_header),
     db: Session = Depends(get_db)
 ):
     """Subscription management page."""
