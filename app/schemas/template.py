@@ -25,7 +25,7 @@ class TemplateBase(BaseModel):
 
 class TemplateCreateRequest(TemplateBase):
     """Schema for creating templates."""
-    template_id: str = Field(..., min_length=1, max_length=50, pattern=r'^[a-z0-9_-]+$')$')
+    template_id: str = Field(..., min_length=1, max_length=50, pattern=r'^[a-z0-9_-]+$')
     version: str = "1.0.0"
     author: Optional[str] = None
     
