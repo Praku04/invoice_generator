@@ -310,6 +310,37 @@ async def test_email_config():
         "configured": bool(settings.smtp_host and settings.smtp_user and settings.smtp_password)
     }
 
+# Test email sending
+@app.post("/test/send-email")
+async def test_send_email(email: str = "test@example.com"):
+    """Send a test email to verify SMTP configuration."""
+    try:
+        from app.database import SessionLocal
+        from app.services.email_service import EmailService
+        
+        db = SessionLocal()
+        try:
+            email_service = EmailService(db)
+            
+            # Send test email
+            email_log = email_service.send_email(
+                to_email=email,
+                subject="Test Email from Invoice Generator",
+                body_html="<h1>Test Email</h1><p>This is a test email to verify SMTP configuration.</p>",
+                body_text="Test Email\n\nThis is a test email to verify SMTP configuration."
+            )
+            
+            return {
+                "status": "success" if email_log.status.value == "sent" else "failed",
+                "message": f"Email {'sent' if email_log.status.value == 'sent' else 'failed'} to {email}",
+                "email_id": email_log.id,
+                "error": email_log.error_message
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        return {"status": "error", "message": f"Test email failed: {str(e)}"}
+
 # Root redirect
 @app.get("/favicon.ico")
 async def favicon():
