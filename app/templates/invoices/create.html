@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Create Invoice</h1>
+    <a href="/invoices" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Invoices
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form id="invoiceForm">
+            <!-- Client Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Client Information</h5>
+                    <div class="mb-3">
+                        <label for="clientName" class="form-label">Client Name *</label>
+                        <input type="text" class="form-control" id="clientName" name="client_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientEmail" class="form-label">Client Email</label>
+                        <input type="email" class="form-control" id="clientEmail" name="client_email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientAddress" class="form-label">Client Address</label>
+                        <textarea class="form-control" id="clientAddress" name="client_address" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Invoice Details</h5>
+                    <div class="mb-3">
+                        <label for="invoiceDate" class="form-label">Invoice Date *</label>
+                        <input type="date" class="form-control" id="invoiceDate" name="invoice_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="dueDate" name="due_date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Items -->
+            <h5>Invoice Items</h5>
+            <div class="table-responsive mb-4">
+                <table class="table" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="item-row">
+                            <td><input type="text" class="form-control" name="description[]" placeholder="Item description" required></td>
+                            <td><input type="number" class="form-control quantity" name="quantity[]" min="1" value="1" required></td>
+                            <td><input type="number" class="form-control rate" name="rate[]" min="0" step="0.01" required></td>
+                            <td><input type="number" class="form-control amount" name="amount[]" readonly></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger remove-item">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mb-4">
+                <button type="button" class="btn btn-outline-primary" id="addItem">Add Item</button>
+            </div>
+
+            <!-- Totals -->
+            <div class="row">
+                <div class="col-md-6 offset-md-6">
+                    <table class="table">
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td class="text-end" id="subtotal">₹0.00</td>
+                        </tr>
+                        <tr>
+                            <td>Tax (18%):</td>
+                            <td class="text-end" id="tax">₹0.00</td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td>Total:</td>
+                            <td class="text-end" id="total">₹0.00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Invoice</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Set today's date as default
+document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+
+// Calculate amounts
+function calculateAmounts() {
+    let subtotal = 0;
+    document.querySelectorAll('.item-row').forEach(row => {
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const rate = parseFloat(row.querySelector('.rate').value) || 0;
+        const amount = quantity * rate;
+        row.querySelector('.amount').value = amount.toFixed(2);
+        subtotal += amount;
+    });
+    
+    const tax = subtotal * 0.18;
+    const total = subtotal + tax;
+    
+    document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+    document.getElementById('tax').textContent = `₹${tax.toFixed(2)}`;
+    document.getElementById('total').textContent = `₹${total.toFixed(2)}`;
+}
+
+// Add event listeners
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('quantity') || e.target.classList.contains('rate')) {
+        calculateAmounts();
+    }
+});
+
+// Add item
+document.getElementById('addItem').addEventListener('click', function() {
+    const tbody = document.querySelector('#itemsTable tbody');
+    const newRow = tbody.querySelector('.item-row').cloneNode(true);
+    newRow.querySelectorAll('input').forEach(input => input.value = input.name.includes('quantity') ? '1' : '');
+    tbody.appendChild(newRow);
+});
+
+// Remove item
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-item')) {
+        const rows = document.querySelectorAll('.item-row');
+        if (rows.length > 1) {
+            e.target.closest('.item-row').remove();
+            calculateAmounts();
+        }
+    }
+});
+
+// Form submission
+document.getElementById('invoiceForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const items = [];
+    
+    // Collect items
+    const descriptions = formData.getAll('description[]');
+    const quantities = formData.getAll('quantity[]');
+    const rates = formData.getAll('rate[]');
+    
+    for (let i = 0; i < descriptions.length; i++) {
+        if (descriptions[i].trim()) {
+            items.push({
+                description: descriptions[i],
+                quantity: parseFloat(quantities[i]),
+                rate: parseFloat(rates[i])
+            });
+        }
+    }
+    
+    const invoiceData = {
+        client_name: formData.get('client_name'),
+        client_email: formData.get('client_email'),
+        client_address: formData.get('client_address'),
+        invoice_date: formData.get('invoice_date'),
+        due_date: formData.get('due_date'),
+        notes: formData.get('notes'),
+        items: items
+    };
+    
+    try {
+        const response = await fetch('/api/invoices/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify(invoiceData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            window.location.href = `/invoices/${result.id}`;
+        } else {
+            const error = await response.json();
+            alert('Error creating invoice: ' + (error.detail || 'Unknown error'));
+        }
+    } catch (error) {
+        alert('Network error: ' + error.message);
+    }
+});
+
+// Initial calculation
+calculateAmounts();
+</script>
+{% endblock %}

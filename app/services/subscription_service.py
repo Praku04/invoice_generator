@@ -125,13 +125,18 @@ class SubscriptionService:
         if not subscription or not subscription.plan:
             return False, 0, 0
         
-        # Get current invoice count for this period
+        # Get current invoice count for this month (not subscription period)
         from app.models.invoice import Invoice, InvoiceStatus
+        from datetime import datetime, timezone
+        
+        # Calculate start of current month
+        now = datetime.now(timezone.utc)
+        month_start = datetime(now.year, now.month, 1, tzinfo=timezone.utc)
         
         current_count = self.db.query(Invoice).filter(
             Invoice.user_id == user_id,
             Invoice.status != InvoiceStatus.DRAFT,
-            Invoice.created_at >= subscription.current_period_start
+            Invoice.created_at >= month_start
         ).count()
         
         limit = subscription.plan.invoice_limit

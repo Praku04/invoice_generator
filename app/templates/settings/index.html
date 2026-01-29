@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Settings</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+            <button class="nav-link active" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button">
+                <i class="bi bi-person me-2"></i>Profile
+            </button>
+            <button class="nav-link" id="v-pills-company-tab" data-bs-toggle="pill" data-bs-target="#v-pills-company" type="button">
+                <i class="bi bi-building me-2"></i>Company
+            </button>
+            <button class="nav-link" id="v-pills-invoice-tab" data-bs-toggle="pill" data-bs-target="#v-pills-invoice" type="button">
+                <i class="bi bi-receipt me-2"></i>Invoice Settings
+            </button>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="tab-content" id="v-pills-tabContent">
+            <!-- Profile Settings -->
+            <div class="tab-pane fade show active" id="v-pills-profile">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="profileForm">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" value="{{ current_user.full_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="{{ current_user.email }}" readonly>
+                                <div class="form-text">Email cannot be changed</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Company Settings -->
+            <div class="tab-pane fade" id="v-pills-company">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Company Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="companyForm">
+                            <div class="mb-3">
+                                <label for="companyName" class="form-label">Company Name</label>
+                                <input type="text" class="form-control" id="companyName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="companyAddress" class="form-label">Address</label>
+                                <textarea class="form-control" id="companyAddress" rows="3"></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="companyPhone" class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" id="companyPhone">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="companyEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="companyEmail">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Company</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice Settings -->
+            <div class="tab-pane fade" id="v-pills-invoice">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Invoice Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="invoiceSettingsForm">
+                            <div class="mb-3">
+                                <label for="invoicePrefix" class="form-label">Invoice Number Prefix</label>
+                                <input type="text" class="form-control" id="invoicePrefix" placeholder="INV-">
+                            </div>
+                            <div class="mb-3">
+                                <label for="taxRate" class="form-label">Default Tax Rate (%)</label>
+                                <input type="number" class="form-control" id="taxRate" min="0" max="100" step="0.01" value="18">
+                            </div>
+                            <div class="mb-3">
+                                <label for="paymentTerms" class="form-label">Default Payment Terms (days)</label>
+                                <input type="number" class="form-control" id="paymentTerms" min="1" value="30">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
